@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Your Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .avatar-section {
+            position: relative;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .avatar:hover {
+            opacity: 0.9;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #4f46e5;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: #1a1a1a;
+        }
+
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #4338ca;
+        }
+
+        .back-btn {
+            background: #6b7280;
+        }
+
+        .back-btn:hover {
+            background: #4b5563;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Profile Settings</h1>
+            <button class="back-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="avatar-section">
+                    <div id="avatar" class="avatar"></div>
+                    <div class="avatar-upload" onclick="document.getElementById('avatarInput').click()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none">
+                </div>
+                <div class="profile-info">
+                    <h2 id="userName">Loading...</h2>
+                    <p id="userLocation">Loading...</p>
+                </div>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Avatar Color</label>
+                    <div class="color-picker" id="colorPicker">
+                        <div class="color-option" style="background: #4f46e5" data-color="#4f46e5"></div>
+                        <div class="color-option" style="background: #10b981" data-color="#10b981"></div>
+                        <div class="color-option" style="background: #f59e0b" data-color="#f59e0b"></div>
+                        <div class="color-option" style="background: #ef4444" data-color="#ef4444"></div>
+                        <div class="color-option" style="background: #8b5cf6" data-color="#8b5cf6"></div>
+                    </div>
+                </div>
+
+                <button type="submit">Save Changes</button>
+            </form>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="goalsCount">0</h3>
+                    <p>Goals Set</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="gratitudesCount">0</h3>
+                    <p>Gratitudes Shared</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="streakCount">0</h3>
+                    <p>Day Streak</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in and load profile data
+        fetch('/profile')
+            .then(response => {
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('location').value = data.location || '';
+                document.getElementById('bio').value = data.bio || '';
+                
+                const avatar = document.getElementById('avatar');
+                avatar.style.backgroundColor = data.avatar_color || '#4f46e5';
+                avatar.textContent = (data.name || 'A')[0].toUpperCase();
+
+                // Update color picker selection
+                const colorOptions = document.querySelectorAll('.color-option');
+                colorOptions.forEach(option => {
+                    if (option.dataset.color === data.avatar_color) {
+                        option.classList.add('selected');
+                    }
+                });
+
+                // Update stats
+                document.getElementById('goalsCount').textContent = data.goals_count || 0;
+                document.getElementById('gratitudesCount').textContent = data.gratitudes_count || 0;
+                document.getElementById('streakCount').textContent = data.streak || 0;
+            });
+
+        // Handle color picker
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                const color = option.dataset.color;
+                document.getElementById('avatar').style.backgroundColor = color;
+            });
+        });
+
+        // Handle profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedColor = document.querySelector('.color-option.selected').dataset.color;
+            const data = {
+                name: document.getElementById('name').value,
+                location: document.getElementById('location').value,
+                bio: document.getElementById('bio').value,
+                avatar_color: selectedColor
+            };
+
+            try {
+                const response = await fetch('/create_profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Profile updated successfully!');
+                    window.location.href = '/dashboard.html';
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update profile');
+            }
+        });
+
+        // Handle avatar upload
+        document.getElementById('avatarInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const response = await fetch('/upload_avatar', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('avatar').style.backgroundImage = `url(${data.avatar_url})`;
+                    document.getElementById('avatar').textContent = '';
+                } else {
+                    alert('Failed to upload avatar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to upload avatar');
+            }
+        });
+    </script>
+</body>
+</html> 

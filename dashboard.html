@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Your Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .profile-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            color: #666;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #4338ca;
+        }
+
+        .feed {
+            margin-top: 2rem;
+        }
+
+        .post {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .post-content {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .post-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Journey</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="profile-section">
+            <div class="profile-header">
+                <div id="avatar" class="avatar"></div>
+                <div class="profile-info">
+                    <h2 id="userName">Loading...</h2>
+                    <p id="userLocation">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h3>Set a Goal</h3>
+                <form id="goalForm">
+                    <div class="form-group">
+                        <label for="goalContent">What do you want to achieve today?</label>
+                        <textarea id="goalContent" required></textarea>
+                    </div>
+                    <button type="submit">Add Goal</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Express Gratitude</h3>
+                <form id="gratitudeForm">
+                    <div class="form-group">
+                        <label for="gratitudeContent">What are you grateful for today?</label>
+                        <textarea id="gratitudeContent" required></textarea>
+                    </div>
+                    <button type="submit">Share Gratitude</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="feed">
+            <h3>Today's Feed</h3>
+            <div id="feedContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        fetch('/profile')
+            .then(response => {
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('userName').textContent = data.name || 'Anonymous';
+                document.getElementById('userLocation').textContent = data.location || 'Location not set';
+                const avatar = document.getElementById('avatar');
+                avatar.style.backgroundColor = data.avatar_color || '#4f46e5';
+                avatar.textContent = (data.name || 'A')[0].toUpperCase();
+            });
+
+        // Handle goal submission
+        document.getElementById('goalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('goalContent').value;
+            
+            try {
+                const response = await fetch('/add_goal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                if (response.ok) {
+                    document.getElementById('goalContent').value = '';
+                    loadFeed();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to add goal');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add goal');
+            }
+        });
+
+        // Handle gratitude submission
+        document.getElementById('gratitudeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('gratitudeContent').value;
+            
+            try {
+                const response = await fetch('/add_gratitude', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                if (response.ok) {
+                    document.getElementById('gratitudeContent').value = '';
+                    loadFeed();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to add gratitude');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add gratitude');
+            }
+        });
+
+        // Load and display feed
+        async function loadFeed() {
+            try {
+                const response = await fetch('/feed');
+                if (!response.ok) {
+                    throw new Error('Failed to load feed');
+                }
+                const posts = await response.json();
+                const feedContent = document.getElementById('feedContent');
+                feedContent.innerHTML = '';
+
+                posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    
+                    const postHeader = document.createElement('div');
+                    postHeader.className = 'post-header';
+                    
+                    const avatar = document.createElement('div');
+                    avatar.className = 'post-avatar';
+                    avatar.style.backgroundColor = post.user.avatar_color || '#4f46e5';
+                    avatar.textContent = (post.user.name || 'A')[0].toUpperCase();
+                    
+                    const userInfo = document.createElement('div');
+                    userInfo.innerHTML = `
+                        <strong>${post.user.name || 'Anonymous'}</strong>
+                        <div class="post-meta">${new Date(post.created_at).toLocaleString()}</div>
+                    `;
+                    
+                    postHeader.appendChild(avatar);
+                    postHeader.appendChild(userInfo);
+                    
+                    const postContent = document.createElement('div');
+                    postContent.className = 'post-content';
+                    postContent.textContent = post.content;
+                    
+                    const postType = document.createElement('div');
+                    postType.className = 'post-type';
+                    postType.textContent = post.type === 'goal' ? '🎯 Goal' : '🙏 Gratitude';
+                    
+                    postElement.appendChild(postHeader);
+                    postElement.appendChild(postContent);
+                    postElement.appendChild(postType);
+                    
+                    feedContent.appendChild(postElement);
+                });
+            } catch (error) {
+                console.error('Error loading feed:', error);
+                document.getElementById('feedContent').innerHTML = '<p>Failed to load feed. Please try again later.</p>';
+            }
+        }
+
+        // Handle logout
+        async function logout() {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    window.location.href = '/login.html';
+                } else {
+                    alert('Failed to logout. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to logout. Please try again.');
+            }
+        }
+
+        // Load feed on page load
+        loadFeed();
+    </script>
+</body>
+</html> 
